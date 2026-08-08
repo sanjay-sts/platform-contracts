@@ -1,0 +1,411 @@
+<title>Two Products, One Protocol — Consolidation Blueprint</title>
+<style>
+  :root {
+    --paper: #f7f8f8;
+    --panel: #ffffff;
+    --ink: #1b2126;
+    --ink-soft: #4a555e;
+    --line: #d8dde1;
+    --ember: #b45a1f;
+    --ember-soft: #f3e4d8;
+    --steel: #44607a;
+    --oss: #2e7d68;
+    --oss-soft: #e2efeb;
+    --paid: #5a5fa8;
+    --paid-soft: #e6e7f4;
+    --mono: "Cascadia Code", Consolas, ui-monospace, monospace;
+    --display: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif;
+    --body: "Segoe UI", system-ui, -apple-system, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #14181c;
+      --panel: #1c2228;
+      --ink: #e6e9eb;
+      --ink-soft: #9daab4;
+      --line: #313b43;
+      --ember: #d97b3a;
+      --ember-soft: #3a2a1c;
+      --steel: #8fadc4;
+      --oss: #4aa98f;
+      --oss-soft: #1d3630;
+      --paid: #9297d8;
+      --paid-soft: #272a4a;
+    }
+  }
+  :root[data-theme="light"] {
+    --paper: #f7f8f8; --panel: #ffffff; --ink: #1b2126; --ink-soft: #4a555e;
+    --line: #d8dde1; --ember: #b45a1f; --ember-soft: #f3e4d8; --steel: #44607a;
+    --oss: #2e7d68; --oss-soft: #e2efeb; --paid: #5a5fa8; --paid-soft: #e6e7f4;
+  }
+  :root[data-theme="dark"] {
+    --paper: #14181c; --panel: #1c2228; --ink: #e6e9eb; --ink-soft: #9daab4;
+    --line: #313b43; --ember: #d97b3a; --ember-soft: #3a2a1c; --steel: #8fadc4;
+    --oss: #4aa98f; --oss-soft: #1d3630; --paid: #9297d8; --paid-soft: #272a4a;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--paper); color: var(--ink);
+    font-family: var(--body); font-size: 16px; line-height: 1.65;
+  }
+  .wrap { max-width: 60rem; margin: 0 auto; padding: 0 1.5rem 6rem; }
+
+  header.masthead { padding: 4rem 0 2.5rem; border-bottom: 2px solid var(--ink); }
+  .eyebrow {
+    font-family: var(--mono); font-size: .72rem; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--ember); margin: 0 0 1rem;
+  }
+  h1 {
+    font-family: var(--display); font-weight: 650; font-size: clamp(1.9rem, 4.5vw, 3rem);
+    line-height: 1.12; letter-spacing: -.015em; margin: 0 0 1rem; text-wrap: balance;
+  }
+  .standfirst { max-width: 44rem; font-size: 1.08rem; color: var(--ink-soft); margin: 0; }
+  .meta-row {
+    display: flex; flex-wrap: wrap; gap: .5rem 2rem; margin-top: 1.5rem;
+    font-family: var(--mono); font-size: .78rem; color: var(--ink-soft);
+  }
+  .meta-row b { color: var(--ink); font-weight: 600; }
+
+  section { margin-top: 3.5rem; }
+  h2 {
+    font-family: var(--display); font-weight: 650; font-size: 1.45rem;
+    letter-spacing: -.01em; margin: 0 0 .35rem; text-wrap: balance;
+    display: flex; align-items: baseline; gap: .75rem;
+  }
+  h2 .num { font-family: var(--mono); font-size: .82rem; font-weight: 400; color: var(--ember); }
+  h3 { font-family: var(--display); font-weight: 600; font-size: 1.05rem; margin: 1.75rem 0 .5rem; }
+  section > p, section li { max-width: 46rem; }
+  p { margin: .7rem 0; }
+  .lede { color: var(--ink-soft); margin-bottom: 1.25rem; }
+  a { color: var(--steel); text-underline-offset: 2px; }
+  a:focus-visible, summary:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
+  code { font-family: var(--mono); font-size: .86em; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: .05em .35em; }
+  strong { font-weight: 650; }
+
+  .panel {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+    padding: 1.25rem 1.5rem; margin: 1.25rem 0;
+  }
+  .diagram { overflow-x: auto; background: #ffffff; border: 1px solid var(--line); border-radius: 8px; padding: 1rem; margin: 1.25rem 0; }
+  .diagram figcaption, figcaption {
+    font-family: var(--mono); font-size: .74rem; color: var(--ink-soft);
+    padding-top: .6rem; letter-spacing: .04em;
+  }
+  figure { margin: 1.25rem 0; }
+  pre.mermaid { margin: 0; display: flex; justify-content: center; }
+
+  .tablewrap { overflow-x: auto; margin: 1.25rem 0; }
+  table { border-collapse: collapse; width: 100%; font-size: .92rem; }
+  th {
+    font-family: var(--mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase;
+    text-align: left; color: var(--ink-soft); font-weight: 600;
+    border-bottom: 2px solid var(--ink); padding: .5rem .9rem .5rem 0;
+  }
+  td { border-bottom: 1px solid var(--line); padding: .65rem .9rem .65rem 0; vertical-align: top; }
+  td:first-child, th:first-child { padding-left: 0; }
+  tr:last-child td { border-bottom: none; }
+  td code { white-space: nowrap; }
+
+  .chip {
+    display: inline-block; font-family: var(--mono); font-size: .72rem; font-weight: 600;
+    padding: .12em .6em; border-radius: 999px; letter-spacing: .05em; white-space: nowrap;
+  }
+  .chip.oss  { background: var(--oss-soft);  color: var(--oss); }
+  .chip.paid { background: var(--paid-soft); color: var(--paid); }
+  .chip.v1   { background: var(--ember-soft); color: var(--ember); }
+  .chip.later{ background: var(--panel); color: var(--ink-soft); border: 1px solid var(--line); }
+
+  .objects { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0; padding: 0; list-style: none; }
+  .objects li {
+    font-family: var(--mono); font-size: .8rem; background: var(--panel);
+    border: 1px solid var(--line); border-left: 3px solid var(--ember);
+    border-radius: 4px; padding: .35em .8em;
+  }
+
+  .split { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin: 1.25rem 0; }
+  .split .col { border: 1px solid var(--line); border-radius: 8px; background: var(--panel); padding: 1.1rem 1.3rem; }
+  .split .col.oss-col  { border-top: 3px solid var(--oss); }
+  .split .col.paid-col { border-top: 3px solid var(--paid); }
+  .split h3 { margin: 0 0 .6rem; }
+  .split ul { margin: 0; padding-left: 1.1rem; }
+  .split li { margin: .3rem 0; font-size: .93rem; }
+
+  .phases { list-style: none; counter-reset: ph -1; margin: 1.5rem 0 0; padding: 0; }
+  .phases li {
+    counter-increment: ph; position: relative; padding: 0 0 1.4rem 3.1rem;
+    border-left: 2px solid var(--line); margin-left: 1rem; max-width: 46rem;
+  }
+  .phases li:last-child { border-left-color: transparent; padding-bottom: 0; }
+  .phases li::before {
+    content: "P" counter(ph); position: absolute; left: -1.05rem; top: -.1rem;
+    font-family: var(--mono); font-size: .74rem; font-weight: 600;
+    background: var(--ink); color: var(--paper); border-radius: 999px;
+    width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center;
+  }
+  .phases li.gate::before { content: "🚀"; background: var(--ember); }
+  .phases b { font-family: var(--display); font-weight: 650; }
+  .phases p { margin: .25rem 0 0; font-size: .93rem; color: var(--ink-soft); }
+
+  .callout {
+    border-left: 3px solid var(--ember); background: var(--panel);
+    border-radius: 0 8px 8px 0; padding: .9rem 1.3rem; margin: 1.25rem 0; max-width: 46rem;
+  }
+  .callout p { margin: .3rem 0; }
+
+  footer { margin-top: 4.5rem; border-top: 1px solid var(--line); padding-top: 1.25rem;
+    font-family: var(--mono); font-size: .76rem; color: var(--ink-soft); }
+  footer ul { margin: .5rem 0 0; padding-left: 1.2rem; }
+  footer li { margin: .25rem 0; }
+  @media (prefers-reduced-motion: no-preference) {
+    a { transition: color .15s ease; }
+  }
+</style>
+
+<div class="wrap">
+  <header class="masthead">
+    <p class="eyebrow">FoundryCore · platform consolidation · 2026-08-02 · design approved, spec in review</p>
+    <h1>Two Products, One Protocol</h1>
+    <p class="standfirst">Five repos become two open-source products — a server platform and a sovereign desktop platform — bound by one published contract, with a commercial governance tier layered cleanly on top.</p>
+    <div class="meta-row">
+      <span>owner <b>Sanjay</b></span>
+      <span>license <b>Apache 2.0 + DCO</b></span>
+      <span>launch story <b>chat anywhere · sync offline · ship in one click</b></span>
+    </div>
+  </header>
+
+  <section>
+    <h2><span class="num">01</span>Why consolidate</h2>
+    <p class="lede">Three drivers, weighted equally, shaped every decision below.</p>
+    <p><strong>Coherent public story.</strong> Five loosely-related repos confuse visitors; two well-named products with one protocol attract users and contributors. <strong>Sustainable maintenance.</strong> One maintainer cannot keep five stacks alive; every surface below is either a product or archived. <strong>Commercial path clarity.</strong> The free/paid seam is decided now, so the open-source core never has to claw features back.</p>
+    <div class="callout">
+      <p><strong>The launch pitch:</strong> “Chat with your server’s agents from any browser or phone. Sync skills and knowledge to your laptop and go fully offline. Vibe-code an app locally and ship it to your server in one click.” No open-source project tells that whole story today.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">02</span>High-level architecture</h2>
+    <p class="lede">Rejected framing: “one engine, two interfaces.” Adopted framing: <strong>one platform contract, two engine implementations</strong> — the desktop is not a thin client; its air-gapped value requires a full local engine.</p>
+    <figure class="diagram">
+      <pre class="mermaid">
+flowchart TB
+  U1["Browser / phone<br/>(anyone on the network)"]
+  U2["Desktop user<br/>(offline-capable)"]
+
+  subgraph P1["PRODUCT 1 · agentprint — server platform (Python)"]
+    WEB["Web UI<br/>chat + management"]
+    ENG["FastAPI engine"]
+    REG[("Registry<br/>7 object types")]
+    CED["Cedar authz<br/>RBAC · 3 principals"]
+    VIBE["Vibe-coding<br/>adapter → OpenCode"]
+    RT["Docker runtime<br/>agents · MCP servers · apps"]
+    SDB[("SurrealDB")]
+    WEB --> ENG
+    ENG --> REG
+    ENG --> CED
+    ENG --> VIBE
+    ENG --> RT
+    ENG --> SDB
+  end
+
+  subgraph P2["PRODUCT 2 · desk agent — desktop platform (Go)"]
+    WUI["Wails desktop UI"]
+    GENG["Local engine<br/>ADK Go · PRE harness"]
+    LREG[("Local registry + ACL")]
+    PGV[("Postgres + pgvector<br/>local knowledge index")]
+    MCPC["MCP client<br/>5-tier auth pyramid"]
+    OLL["Ollama<br/>offline chat + embeddings"]
+    WUI --> GENG
+    GENG --> LREG
+    GENG --> PGV
+    GENG --> MCPC
+    GENG --> OLL
+  end
+
+  subgraph CTR["CONTRACTS REPO · the treaty (Apache 2.0)"]
+    direction LR
+    C1["registry sync"]
+    C2["deploy push"]
+    C3["A2A agent card"]
+    C4["tag vocabulary"]
+    C5["workload identity<br/>(X.509-capable)"]
+    C6["OKF conventions"]
+  end
+
+  COM["Commercial modules (closed)<br/>multi-IdP · ABAC · delegation chains<br/>budgets · approvals · audit · mTLS"]
+
+  U1 --> WEB
+  U2 --> WUI
+  P1 -.implements.- CTR
+  P2 -.implements.- CTR
+  COM -->|plugs into| ENG
+      </pre>
+      <figcaption>FIG 1 — Two engines, one published contract. Commercial capability plugs into the server engine as separable modules.</figcaption>
+    </figure>
+    <p>The federation principle survives intact: every agent remains a standalone container with its own A2A endpoint, and state flows by message-passing — the contracts repo simply makes the messages canonical.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">03</span>Repo endgame</h2>
+    <div class="tablewrap"><table>
+      <tr><th>Repo</th><th>Fate</th><th>What moves where</th></tr>
+      <tr><td><code>agentprint</code></td><td><strong>Product 1 — server platform</strong></td><td>Gains chat UI, unified registry, OKF knowledge, Cedar identity core, vibe-coding pipeline, intake governance.</td></tr>
+      <tr><td><code>sts-adk-go-local-install-agent</code></td><td><strong>Product 2 — desktop platform</strong></td><td>Gains OKF sync, Ollama provider, PKCE login to agentprint. Renamed under the new brand.</td></tr>
+      <tr><td><em>new</em> contracts repo</td><td><strong>The treaty</strong></td><td>Registry sync, deploy push, agent-card profile, tag vocabulary, workload-identity schema, OKF serving conventions.</td></tr>
+      <tr><td><code>sts-entraid-…-poc</code></td><td>Archive when ready</td><td>Cedar RBAC/ABAC patterns, multi-IdP, OBO → agentprint (core + commercial).</td></tr>
+      <tr><td><code>sts-local-draftbox-poc</code></td><td>Archive when ready</td><td>OpenCode pipeline, deploy modes, preview → agentprint vibe-coding.</td></tr>
+      <tr><td><code>sts-mcp-skills-fastmcp3-poc</code></td><td>Archive when ready</td><td>Skills-as-resources serving + offline sync pattern → agentprint registry.</td></tr>
+    </table></div>
+    <p>POCs archive only after their patterns graduate — each README ends with “this graduated into agentprint; here’s where.”</p>
+  </section>
+
+  <section>
+    <h2><span class="num">04</span>Platform objects &amp; knowledge</h2>
+    <p class="lede">The registry manages seven object types, synced by one mechanism.</p>
+    <ul class="objects">
+      <li>agents</li><li>MCP servers</li><li>skills</li><li>prompts</li><li>apps</li><li>policies</li><li>knowledge bundles</li>
+    </ul>
+    <p><strong>Knowledge bundles adopt Google’s Open Knowledge Format (OKF)</strong> — directories of Markdown with YAML frontmatter, distributed as git repos or archives. Bundles carry <em>documents only, never embeddings</em>: each engine builds its own local index (SurrealDB server-side, pgvector on the desktop), the same way a database builds its own btrees. OKF’s trust frontmatter (<code>generated</code>, <code>verified</code>, <code>sources</code>, <code>status</code>, <code>stale_after</code>) is adopted as-is.</p>
+    <p>The spec is two months old with no established server ecosystem — <strong>native OKF support is a launch differentiator</strong>, and it is structurally a sibling of the agentskills.io pattern SkillHub already serves.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">05</span>Desktop ↔ server integration</h2>
+    <p class="lede">Four flows on the roadmap. V1 builds two; the other two are deliberately deferred, not forgotten.</p>
+    <figure class="diagram">
+      <pre class="mermaid">
+flowchart LR
+  D["Desk agent<br/>(local engine)"]
+  S["agentprint<br/>(server engine)"]
+  S ==>|"① registry pull — skills, prompts,<br/>agents, OKF bundles (one-way)"| D
+  D ==>|"② app deploy push —<br/>vibe-coded app → hosted URL"| S
+  D -.->|"③ A2A remote invocation<br/>(deferred: needs identity chain)"| S
+  S -.->|"④ policy / identity push<br/>(commercial tier)"| D
+      </pre>
+      <figcaption>FIG 2 — Solid arrows ship in v1; dotted arrows are roadmap. Registry sync is one-directional: the server is the source of truth.</figcaption>
+    </figure>
+    <div class="tablewrap"><table>
+      <tr><th>Flow</th><th>Direction</th><th>Status</th></tr>
+      <tr><td>① Registry pull (incl. OKF bundles)</td><td>server → desktop</td><td><span class="chip v1">V1</span></td></tr>
+      <tr><td>② App deploy push</td><td>desktop → server</td><td><span class="chip v1">V1</span></td></tr>
+      <tr><td>③ A2A remote agent invocation</td><td>bidirectional</td><td><span class="chip later">DEFERRED</span></td></tr>
+      <tr><td>④ Policy / identity push</td><td>server → desktop</td><td><span class="chip paid">COMMERCIAL</span></td></tr>
+      <tr><td>Publish registry objects from desktop</td><td>desktop → server</td><td><span class="chip later">NAMED V2 FEATURE</span></td></tr>
+    </table></div>
+    <p><strong>Desktop sign-in follows the Claude Code / Amazon Q pattern:</strong> the app opens the system browser for one OAuth 2.1 PKCE dance against agentprint; agentprint brokers every IdP server-side. The desktop never contains per-IdP code, and air-gapped machines use local accounts with no IdP at all. The PKCE machinery already exists in the desk agent’s Phase 7 MCP auth pyramid.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">06</span>Vibe-coding &amp; local models</h2>
+    <p><strong>POCForge graduates into agentprint at launch</strong> — the OpenCode subprocess pipeline, chat-to-code UI, live preview, and three deploy modes. It lands behind a <strong>thin coding-backend adapter</strong> (start session · send prompt · stream events · get changed files) with OpenCode as the only launch implementation. The seam is what lets users select their own AI coding tool later — Claude Code CLI, Aider, or anything else — one adapter file per backend, and an attractive contributor entry point.</p>
+    <p><strong>Desktop vibe-coding is deferred.</strong> The partial Go implementation is parked; the desktop reuses the adapter contract in a later phase, after agentprint has productized it once.</p>
+    <p><strong>Ollama is a first-class optional provider in both engines.</strong> On the desktop it makes the air-gapped story literally true — offline chat and offline embeddings for knowledge search. In agentprint it slots in via the adapter and the AI-assisted creation flows for agents, MCP servers, skills, and prompts.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">07</span>Identity &amp; governance</h2>
+    <p class="lede">Access management expands beyond users: agents and MCP servers become principals themselves. Patterns adopted from AWS Loom and LiteLLM — the patterns, not the platforms.</p>
+    <div class="tablewrap"><table>
+      <tr><th>Layer</th><th>Design</th><th>Already proven by</th></tr>
+      <tr><td>Principals</td><td>Cedar principals <code>User</code>, <code>Agent</code>, <code>MCPServer</code>; registry issues workload identity (ID + client credential) at intake approval</td><td>entraid POC Cedar engine</td></tr>
+      <tr><td>Resources</td><td>Tools are Cedar resources → restriction down to a single tool per role or agent</td><td><code>require_cedar()</code> in entraid POC</td></tr>
+      <tr><td>Tags</td><td>Mandatory at intake: <code>readonly/destructive</code>, data class, owner, environment — feed policies, planner hints, scopes</td><td>Desk agent Phase 7 tag bag</td></tr>
+      <tr><td>Metering</td><td>LiteLLM virtual keys per agent: model allowlists, budgets, rate limits — separate concern from authorization</td><td>entraid POC runs LiteLLM</td></tr>
+      <tr><td>Transport</td><td>Workload identity expressible as X.509 (SPIFFE-style) in the contracts — mTLS ships later as a commercial multi-host feature</td><td>Desk agent mTLS client tier</td></tr>
+    </table></div>
+    <h3>Intake: how anything enters the platform</h3>
+    <figure class="diagram">
+      <pre class="mermaid">
+stateDiagram-v2
+  direction LR
+  [*] --> Draft
+  Draft --> Submitted : register via wizard
+  Submitted --> Checks : automated — manifest,<br/>tool annotations, image scan
+  Checks --> Draft : fail
+  Checks --> Approved : pass + admin approval<br/>(HITL gate on destructive tags)
+  Approved --> Deployed : workload identity issued
+  Deployed --> Deprecated
+  Deprecated --> [*]
+      </pre>
+      <figcaption>FIG 3 — Intake state machine. Identity is issued at approval, never before. Cedar answers “may this principal invoke this tool”; LiteLLM answers “at what cost ceiling.”</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2><span class="num">08</span>Open source vs commercial</h2>
+    <p class="lede">Individuals get real security free; organizations pay for governance. Commercial code lives in a separate private repo from day one — the OSS repos never contain paid code.</p>
+    <div class="split">
+      <div class="col oss-col">
+        <h3><span class="chip oss">OPEN SOURCE · APACHE 2.0</span></h3>
+        <ul>
+          <li>Local users + API keys, single OIDC provider</li>
+          <li>Cedar RBAC with tool-level restriction, 3 principals</li>
+          <li>Workload identity + mandatory tagging</li>
+          <li>Single-admin intake (register → validate → approve)</li>
+          <li>Desktop local-only ACL</li>
+          <li>TLS everywhere + workload tokens</li>
+          <li>Vibe-coding, registry, chat, OKF — the whole product story</li>
+        </ul>
+      </div>
+      <div class="col paid-col">
+        <h3><span class="chip paid">COMMERCIAL · CLOSED MODULES</span></h3>
+        <ul>
+          <li>Multi-IdP dispatch (Entra + Cognito + …)</li>
+          <li>Cedar ABAC on runtime attributes</li>
+          <li>RFC 8693 delegation chains, OBO token exchange</li>
+          <li>Budget &amp; rate-limit enforcement</li>
+          <li>Multi-stage approval workflows, audit trails</li>
+          <li>Policy/identity push to desktops (flow ④)</li>
+          <li>mTLS multi-host deployments</li>
+        </ul>
+      </div>
+    </div>
+    <p>Contributions under <strong>DCO</strong>, not a CLA. And the real moat is neither: <strong>register the trademark</strong> on the eventual brand — anyone can fork Apache code; nobody can fork the name.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">09</span>Sequencing</h2>
+    <p class="lede">Ordered for one maintainer: contracts first, auth before public API surface grows, the demo feature on top, integration last — because the integration <em>is</em> the launch story.</p>
+    <ol class="phases">
+      <li><b>Foundations.</b><p>Contracts repo v0.1 (tag vocabulary, registry sync, deploy push, agent card, workload identity). GitHub org. Branding decision gates launch — not the build.</p></li>
+      <li><b>agentprint: unified registry + chat.</b><p>Absorb SkillHub; add prompts and OKF knowledge bundles; ship the chat surface in the web UI.</p></li>
+      <li><b>agentprint: identity core.</b><p>Cedar RBAC, three principals, workload identity issuance, tagging, single-admin intake — before the API surface is public, so auth is never a retrofit.</p></li>
+      <li><b>agentprint: vibe-coding graduates.</b><p>Coding-backend adapter + OpenCode implementation; POCForge pipeline and deploy modes fold in.</p></li>
+      <li><b>Desktop integration.</b><p>Flows ① + ②, PKCE login, Ollama + local OKF embedding index, rename under the new brand.</p></li>
+      <li class="gate"><b>Public launch.</b><p>Announcement, docs polish, the integrated demo. Commercial modules begin only after launch traction — a paid tier before free-tier users is built on air.</p></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2><span class="num">10</span>Decision log</h2>
+    <div class="tablewrap"><table>
+      <tr><th>#</th><th>Question</th><th>Decision</th></tr>
+      <tr><td>1</td><td>Engine framing</td><td>One platform contract, two engine implementations (server Python, local Go)</td></tr>
+      <tr><td>2</td><td>V1 integration</td><td>Flows ① + ② only; one-directional registry sync; all four flows on roadmap</td></tr>
+      <tr><td>3</td><td>Vibe-coding placement</td><td>agentprint at launch; desktop later (Go partial parked)</td></tr>
+      <tr><td>4</td><td>Coding backend</td><td>Thin adapter; OpenCode sole launch implementation; user-selectable later</td></tr>
+      <tr><td>5</td><td>Knowledge bundle format</td><td>Google OKF — documents only, no embeddings; engines build local indexes</td></tr>
+      <tr><td>6</td><td>Offline AI</td><td>Ollama optional provider in both engines</td></tr>
+      <tr><td>7</td><td>Identity home</td><td>agentprint brokers all IdPs; desktop does one PKCE flow (Claude Code / Amazon Q pattern)</td></tr>
+      <tr><td>8</td><td>Repo endgame</td><td>2 products + contracts repo; POCs archived when patterns graduate</td></tr>
+      <tr><td>9</td><td>Governance model</td><td>3 Cedar principals, tool-level restriction, mandatory tags, intake state machine; Loom + LiteLLM patterns, not platforms</td></tr>
+      <tr><td>10</td><td>mTLS</td><td>X.509 hook in contracts now; commercial multi-host feature later</td></tr>
+      <tr><td>11</td><td>License &amp; sequencing</td><td>Apache 2.0 + DCO + closed commercial modules; phases 0–4, launch gate after desktop integration</td></tr>
+    </table></div>
+    <p><strong>Open items only Sanjay can close:</strong> the brand / GitHub org name (register the trademark), and the desk agent’s product name.</p>
+  </section>
+
+  <footer>
+    REFERENCES
+    <ul>
+      <li><a href="https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md">OKF SPEC.md (v0.2) — GoogleCloudPlatform/knowledge-catalog</a></li>
+      <li><a href="https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing">Google Cloud — Open Knowledge Format announcement</a></li>
+      <li><a href="https://github.com/awslabs/loom/">awslabs/loom — enterprise agent platform (patterns adopted)</a></li>
+      <li><a href="https://aws.amazon.com/blogs/opensource/building-secure-ai-agents-at-scale-introducing-loom-for-aws/">AWS Open Source Blog — Introducing Loom</a></li>
+      <li><a href="https://docs.litellm.ai/docs/proxy/users">LiteLLM — virtual keys, budgets, rate limits</a></li>
+      <li><a href="https://aws.amazon.com/about-aws/whats-new/2024/05/aws-iam-identity-pkce-authorizations-aws-applications/">AWS IAM Identity Center — PKCE authorization</a></li>
+      <li><a href="https://code.claude.com/docs/en/authentication">Claude Code — authentication docs</a></li>
+    </ul>
+    <p>Companion spec: <code>docs/superpowers/specs/2026-08-02-product-consolidation-design.md</code> · Design session 2026-08-02</p>
+  </footer>
+</div>
