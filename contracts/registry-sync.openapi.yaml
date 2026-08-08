@@ -7,6 +7,8 @@ info:
     source of truth; clients never push registry objects (publish-from-
     desktop is a deferred v2 feature). Clients poll with a cursor and
     download files verified by sha256.
+security:
+  - bearerAuth: []
 paths:
   /v0/registry/objects:
     get:
@@ -31,6 +33,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CatalogPage'
+        '401':
+          description: Missing or invalid credential.
   /v0/registry/objects/{type}/{name}:
     get:
       operationId: getObjectManifest
@@ -53,6 +57,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ObjectManifest'
+        '401':
+          description: Missing or invalid credential.
         '404':
           description: Unknown object.
   /v0/registry/objects/{type}/{name}/files/{path}:
@@ -84,6 +90,8 @@ paths:
               schema:
                 type: string
                 format: binary
+        '401':
+          description: Missing or invalid credential.
         '404':
           description: Unknown object or path.
 components:
@@ -93,7 +101,7 @@ components:
       enum: [agent, mcp-server, skill, prompt, app, policy, knowledge-bundle]
     CatalogEntry:
       type: object
-      required: [type, name, version, sha256]
+      required: [type, name, version, etag]
       properties:
         type:
           $ref: '#/components/schemas/ObjectType'
@@ -101,14 +109,22 @@ components:
           type: string
         version:
           type: string
-        sha256:
+        etag:
           type: string
-          description: Hash of the object manifest; changes when any file changes.
+          description: >-
+            Opaque change marker; changes whenever any file of the object
+            changes. Clients compare for equality only - no recomputation.
         tags:
           type: array
           items:
             type: string
           uniqueItems: true
+        deleted:
+          type: boolean
+          description: >-
+            Present and true when the object has been removed from the
+            registry; clients MUST delete their local copy. Absent or false
+            otherwise.
     CatalogPage:
       type: object
       required: [entries]
@@ -148,3 +164,7 @@ components:
                 minimum: 0
               sha256:
                 type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
