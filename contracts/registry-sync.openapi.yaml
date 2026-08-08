@@ -1,0 +1,150 @@
+openapi: 3.0.3
+info:
+  title: Registry Sync API
+  version: 0.1.0
+  description: >
+    One-way catalog sync, server -> desktop. The server registry is the
+    source of truth; clients never push registry objects (publish-from-
+    desktop is a deferred v2 feature). Clients poll with a cursor and
+    download files verified by sha256.
+paths:
+  /v0/registry/objects:
+    get:
+      operationId: listObjects
+      summary: List catalog entries, optionally filtered and cursored.
+      parameters:
+        - name: type
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/ObjectType'
+        - name: since
+          in: query
+          required: false
+          description: Opaque cursor from a previous response.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Catalog page.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogPage'
+  /v0/registry/objects/{type}/{name}:
+    get:
+      operationId: getObjectManifest
+      summary: Manifest for one object (files, sizes, hashes).
+      parameters:
+        - name: type
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ObjectType'
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Object manifest.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectManifest'
+        '404':
+          description: Unknown object.
+  /v0/registry/objects/{type}/{name}/files/{path}:
+    get:
+      operationId: getObjectFile
+      summary: Raw file content for one manifest entry.
+      parameters:
+        - name: type
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ObjectType'
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: path
+          in: path
+          required: true
+          description: Manifest-relative file path (URL-encoded).
+          schema:
+            type: string
+      responses:
+        '200':
+          description: File bytes.
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Unknown object or path.
+components:
+  schemas:
+    ObjectType:
+      type: string
+      enum: [agent, mcp-server, skill, prompt, app, policy, knowledge-bundle]
+    CatalogEntry:
+      type: object
+      required: [type, name, version, sha256]
+      properties:
+        type:
+          $ref: '#/components/schemas/ObjectType'
+        name:
+          type: string
+        version:
+          type: string
+        sha256:
+          type: string
+          description: Hash of the object manifest; changes when any file changes.
+        tags:
+          type: array
+          items:
+            type: string
+          uniqueItems: true
+    CatalogPage:
+      type: object
+      required: [entries]
+      properties:
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/CatalogEntry'
+        next:
+          type: string
+          description: Cursor for the next page; absent on the last page.
+    ObjectManifest:
+      type: object
+      required: [type, name, version, files]
+      properties:
+        type:
+          $ref: '#/components/schemas/ObjectType'
+        name:
+          type: string
+        version:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+          uniqueItems: true
+        files:
+          type: array
+          items:
+            type: object
+            required: [path, size, sha256]
+            properties:
+              path:
+                type: string
+              size:
+                type: integer
+                minimum: 0
+              sha256:
+                type: string
