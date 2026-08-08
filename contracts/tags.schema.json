@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/sanjay-sts/platform-contracts/contracts/tags.schema.json",
+  "title": "Tag Set",
+  "description": "A set of namespaced tags attached to any platform object. Grammar: <namespace>:<value>.",
+  "type": "array",
+  "items": {
+    "type": "string",
+    "pattern": "^[a-z][a-z0-9_-]*:[a-z0-9._@/-]+$"
+  },
+  "uniqueItems": true
+}
