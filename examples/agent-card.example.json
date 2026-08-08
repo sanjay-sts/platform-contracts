@@ -1,0 +1,11 @@
+{
+  "name": "Billing Agent",
+  "description": "Answers billing questions and produces invoice summaries from the finance MCP tools.",
+  "url": "https://agentprint.example.com/agents/billing-agent",
+  "version": "1.0.0",
+  "capabilities": { "streaming": true },
+  "x-platform": {
+    "identity_id": "billing-agent",
+    "tags": ["risk:readonly", "data:confidential", "owner:sanjay", "env:prod"]
+  }
+}

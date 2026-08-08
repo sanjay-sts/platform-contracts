@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/sanjay-sts/platform-contracts/contracts/agent-card.schema.json",
+  "title": "Platform Agent Card Profile",
+  "description": "Constraints this platform adds on top of the A2A agent card. Extra A2A fields are allowed.",
+  "type": "object",
+  "required": ["name", "description", "url", "version", "x-platform"],
+  "properties": {
+    "name": { "type": "string", "minLength": 1 },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024,
+      "description": "Routing description ONLY — what this agent is for. Never the agent's instruction/system prompt."
+    },
+    "url": { "type": "string", "format": "uri" },
+    "version": { "type": "string" },
+    "x-platform": {
+      "type": "object",
+      "required": ["identity_id", "tags"],
+      "additionalProperties": false,
+      "properties": {
+        "identity_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._-]*$",
+          "description": "The agent's workload-identity id issued by the registry."
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^[a-z][a-z0-9_-]*:[a-z0-9._@/-]+$" },
+          "uniqueItems": true
+        }
+      }
+    }
+  }
+}
