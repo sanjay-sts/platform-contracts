@@ -8,7 +8,9 @@ https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md
 
 1. A bundle is a registry object of type `knowledge-bundle`, synced via
    the Registry Sync API like any other object; its manifest follows
-   `knowledge-manifest.schema.json`.
+   `knowledge-manifest.schema.json`. When served via the Registry Sync
+   API, the manifest carries `type: knowledge-bundle` and satisfies both
+   this schema and the sync API's ObjectManifest shape.
 2. Bundle root MUST contain `index.md`; its frontmatter SHOULD declare
    `okf_version`, which the manifest mirrors.
 3. **Documents only.** Bundles never contain embeddings, vector indexes,

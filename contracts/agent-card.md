@@ -12,7 +12,9 @@ Rules:
   system prompt; conflating the two is a known anti-pattern.
 - `x-platform.identity_id` binds the card to the workload identity the
   registry issued at intake (`workload-identity.md`). Consumers resolve
-  the id against the registry before trusting the card.
+  the id against the registry before trusting the card. The
+  identity-lookup endpoint is not yet specified in v0.1; until it is,
+  resolution is implementation-defined and this binding is advisory.
 - `x-platform.tags` follow `tags.md` and MUST include the mandatory
   intake namespaces (`risk`, `data`, `owner`, `env`).
 

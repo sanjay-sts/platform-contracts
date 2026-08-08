@@ -7,6 +7,7 @@
   "required": ["name", "version", "okf_version", "files"],
   "additionalProperties": false,
   "properties": {
+    "type": { "const": "knowledge-bundle", "description": "Present when this manifest is served as a Registry Sync ObjectManifest." },
     "name": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*$" },
     "version": { "type": "string" },
     "okf_version": { "type": "string", "description": "OKF spec version the bundle targets, e.g. 0.2." },
