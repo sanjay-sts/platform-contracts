@@ -1,0 +1,10 @@
+{
+  "name": "finance-kb",
+  "version": "2026.08.0",
+  "okf_version": "0.2",
+  "tags": ["risk:readonly", "data:internal", "owner:sanjay", "env:prod"],
+  "files": [
+    { "path": "index.md", "size": 812, "sha256": "3b8f3f1f0f9d6f0f8a1f2f3f4f5f6f7f8f9f0f1f2f3f4f5f6f7f8f9f0f1f2f3f" },
+    { "path": "metrics/monthly-revenue.md", "size": 2048, "sha256": "9c2e4f6a8b0d2f4a6c8e0a2c4e6a8c0e2a4c6e8a0c2e4a6c8e0a2c4e6a8c0e2a" }
+  ]
+}

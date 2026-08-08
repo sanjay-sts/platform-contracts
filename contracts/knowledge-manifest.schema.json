@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/sanjay-sts/platform-contracts/contracts/knowledge-manifest.schema.json",
+  "title": "Knowledge Bundle Manifest",
+  "description": "Manifest for one OKF bundle served through the registry. Documents only — embeddings are a consumer-local index and never ship in a bundle (hence additionalProperties: false).",
+  "type": "object",
+  "required": ["name", "version", "okf_version", "files"],
+  "additionalProperties": false,
+  "properties": {
+    "name": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*$" },
+    "version": { "type": "string" },
+    "okf_version": { "type": "string", "description": "OKF spec version the bundle targets, e.g. 0.2." },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z][a-z0-9_-]*:[a-z0-9._@/-]+$" },
+      "uniqueItems": true
+    },
+    "files": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["path", "size", "sha256"],
+        "additionalProperties": false,
+        "properties": {
+          "path": { "type": "string", "pattern": "\\.(md|markdown)$" },
+          "size": { "type": "integer", "minimum": 0 },
+          "sha256": { "type": "string" }
+        }
+      }
+    }
+  }
+}
