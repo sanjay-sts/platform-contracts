@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/sanjay-sts/platform-contracts/contracts/workload-identity.schema.json",
+  "title": "Workload Identity",
+  "description": "Identity issued by the registry to a platform principal at intake approval. Never issued before approval.",
+  "type": "object",
+  "required": ["principal_type", "id", "issuer", "credential"],
+  "additionalProperties": false,
+  "properties": {
+    "principal_type": { "enum": ["user", "agent", "mcp-server"] },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]*$",
+      "description": "Stable registry-scoped identifier."
+    },
+    "issuer": { "type": "string", "format": "uri" },
+    "credential": {
+      "type": "object",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "enum": ["bearer-token", "client-credentials", "x509-svid"] },
+        "x509": {
+          "type": "object",
+          "required": ["spiffe_id"],
+          "additionalProperties": false,
+          "properties": {
+            "spiffe_id": { "type": "string", "pattern": "^spiffe://" }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "type": { "const": "x509-svid" } } },
+          "then": { "required": ["type", "x509"] }
+        }
+      ]
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z][a-z0-9_-]*:[a-z0-9._@/-]+$" },
+      "uniqueItems": true
+    }
+  }
+}

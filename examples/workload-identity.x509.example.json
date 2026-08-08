@@ -1,0 +1,10 @@
+{
+  "principal_type": "mcp-server",
+  "id": "github-tools",
+  "issuer": "https://agentprint.example.com",
+  "credential": {
+    "type": "x509-svid",
+    "x509": { "spiffe_id": "spiffe://agentprint.example.com/mcp-server/github-tools" }
+  },
+  "tags": ["risk:destructive", "data:confidential", "owner:sanjay", "env:prod"]
+}

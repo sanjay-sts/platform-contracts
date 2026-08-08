@@ -1,0 +1,7 @@
+{
+  "principal_type": "agent",
+  "id": "billing-agent",
+  "issuer": "https://agentprint.example.com",
+  "credential": { "type": "bearer-token" },
+  "tags": ["risk:readonly", "data:internal", "owner:sanjay", "env:dev"]
+}
