@@ -1,0 +1,102 @@
+openapi: 3.0.3
+info:
+  title: App Deploy Push API
+  version: 0.1.0
+  description: >
+    Desktop -> server. A locally built (vibe-coded) app is pushed as an
+    archive plus manifest; the server builds and hosts it and reports
+    status. The server chooses the deploy backend (docker / coolify /
+    gitea) - clients never select it.
+security:
+  - bearerAuth: []
+paths:
+  /v0/apps:
+    post:
+      operationId: pushApp
+      summary: Upload an app archive for build + hosting.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [manifest, archive]
+              properties:
+                manifest:
+                  $ref: '#/components/schemas/AppManifest'
+                archive:
+                  type: string
+                  format: binary
+                  description: gzip tarball of the app source tree.
+      responses:
+        '202':
+          description: Accepted; build queued.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Deployment'
+        '400':
+          description: Invalid manifest or archive.
+        '401':
+          description: Missing or invalid credential.
+        '403':
+          description: Caller not authorized to deploy.
+  /v0/deployments/{id}:
+    get:
+      operationId: getDeployment
+      summary: Status of one deployment.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Current deployment state.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Deployment'
+        '401':
+          description: Missing or invalid credential.
+        '404':
+          description: Unknown deployment.
+components:
+  schemas:
+    AppManifest:
+      type: object
+      required: [name, version, sha256]
+      properties:
+        name:
+          type: string
+          pattern: '^[a-z0-9][a-z0-9._-]*$'
+        version:
+          type: string
+        sha256:
+          type: string
+          description: Hash of the uploaded archive.
+        tags:
+          type: array
+          items:
+            type: string
+          uniqueItems: true
+    Deployment:
+      type: object
+      required: [id, status]
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+          enum: [queued, building, deployed, failed]
+        url:
+          type: string
+          description: Public URL once status is deployed.
+        error:
+          type: string
+          description: Human-readable failure reason when status is failed.
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
