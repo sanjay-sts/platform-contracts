@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Registry Sync API
-  version: 0.1.0
+  version: 0.2.0
   description: >
     One-way catalog sync, server -> desktop. The server registry is the
     source of truth; clients never push registry objects (publish-from-
