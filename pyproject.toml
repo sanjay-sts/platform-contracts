@@ -1,6 +1,6 @@
 [project]
 name = "platform-contracts"
-version = "0.1.0"
+version = "0.2.0"
 description = "Contract schemas and specs for the two-product platform"
 requires-python = ">=3.12"
 dependencies = []

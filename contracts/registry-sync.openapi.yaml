@@ -33,14 +33,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CatalogPage'
+        '400':
+          description: Invalid object type or undecodable cursor.
         '401':
           description: Missing or invalid credential.
-  /v0/registry/objects/{type}/{name}:
+  /v0/registry/objects/{object_type}/{name}:
     get:
       operationId: getObjectManifest
       summary: Manifest for one object (files, sizes, hashes).
       parameters:
-        - name: type
+        - name: object_type
           in: path
           required: true
           schema:
@@ -61,12 +63,12 @@ paths:
           description: Missing or invalid credential.
         '404':
           description: Unknown object.
-  /v0/registry/objects/{type}/{name}/files/{path}:
+  /v0/registry/objects/{object_type}/{name}/files/{path}:
     get:
       operationId: getObjectFile
       summary: Raw file content for one manifest entry.
       parameters:
-        - name: type
+        - name: object_type
           in: path
           required: true
           schema:
@@ -127,7 +129,7 @@ components:
             otherwise.
     CatalogPage:
       type: object
-      required: [entries]
+      required: [entries, next]
       properties:
         entries:
           type: array
@@ -135,7 +137,9 @@ components:
             $ref: '#/components/schemas/CatalogEntry'
         next:
           type: string
-          description: Cursor for the next page; absent on the last page.
+          description: >-
+            Cursor to resume from. Always present. When `entries` is empty
+            the client is caught up and SHOULD keep polling with this cursor.
     ObjectManifest:
       type: object
       required: [type, name, version, files]

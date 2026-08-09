@@ -9,6 +9,8 @@ whole repo, git-tagged (`v0.1.0`).
 - **Breaking** — anything that makes a currently-valid instance invalid
   or changes endpoint semantics. Requires a major bump and an issue
   discussing migration before merge.
+- **Pre-1.0** — minor versions MAY tighten validation (make previously-valid
+  instances invalid); consumers should pin minor versions.
 
 Products declare which contract version they implement in their own
 READMEs. Independent SemVer per product with a published compatibility
