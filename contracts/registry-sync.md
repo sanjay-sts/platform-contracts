@@ -23,6 +23,23 @@ This is the SkillHub sync-catalog-to-disk pattern generalized to all
 seven object types. Knowledge bundles additionally follow
 `okf-serving.md`.
 
+## Skill objects: `SKILL.md` frontmatter
+
+A skill's `SKILL.md` frontmatter identifies it as follows:
+
+- `name` is the skill's identifier. It MUST equal the object's `name` in the
+  catalog, which is also the folder the skill is delivered under.
+- `title` is the optional human-readable display name. A server omits it when
+  it would equal `name`.
+
+Clients show `title` when present and fall back to `name`. A client MAY use the
+object name from the catalog in place of the frontmatter `name`, and MUST ignore
+frontmatter keys it doesn't recognize.
+
+A server may correct existing frontmatter without publishing a new version, so
+a client that already holds a version can keep its earlier bytes until the next
+version. The manifest's `sha256` values describe what the server serves now.
+
 ## Auth
 
 Requests carry the caller's credential per `workload-identity.md`
